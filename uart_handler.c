@@ -23,7 +23,7 @@
 #define SOFTUART_PIN 7
 
 /* Variables */
-volatile uint8_t in_buffer[UART_BUF_SIZE];
+uint8_t in_buffer[UART_BUF_SIZE];
 volatile uint8_t c_len = 0;
 
 /** Interrupt Service Routine for Receive Complete
