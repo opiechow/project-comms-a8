@@ -65,7 +65,7 @@ void portb_init(void) {
 }
 
 /* T = 1/f, 1.000.000 microseconds in a second. */
-double baud_to_us(int baudrate) { return 1000000 / baudrate; }
+static inline double baud_to_us(int baudrate) { return 1000000 / baudrate; }
 
 /* Bit magic */
 #define CHECK_BIT(var, pos) ((var) & (1 << (pos)))
