@@ -50,8 +50,9 @@ void USART_Init(void) {
 
 void USART_SendByte(uint8_t u8Data) {
   // Wait until last byte has been transmitted
-  while ((UCSRA & (1 << UDRE)) == 0)
+  while ((UCSRA & (1 << UDRE)) == 0) {
     ;
+  }
 
   // Transmit data
   UDR = u8Data;
