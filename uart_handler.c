@@ -153,7 +153,10 @@ static void esp_wait_for_ok(unsigned int timeout, uint8_t num_retries)
 
 void send_esp_config()
 {
-  uint8_t *esp_init_cmds[] = {"AT+CIPMUX=1\r\n", "AT+CIPSERVER=1,1234\r\n "};
+  uint8_t *esp_init_cmds[] = {
+      "AT+CWSAP=\"TalkingBox\",\"TalkToMe\",1,3\r\n",
+      "AT+CIPMUX=1\r\n",
+      "AT+CIPSERVER=1,1234\r\n "};
   uint8_t i;
 
   for (i = 0; i < ARRAY_SIZE(esp_init_cmds); i++)
@@ -198,13 +201,18 @@ void output_adjustments(char *out_buf)
 {
   char *cur;
 
-  if (strlen(out_buf) == 2)
+  /* This funny ''Lovelace'' sequence is sent on empty string by ESP. */
+  if (out_buf[0] == 0xA &&
+      out_buf[1] == 0xD &&
+      out_buf[2] == 0xA)
   {
     out_buf[0] = '\r';
     out_buf[1] = 0;
+    out_buf[2] = 0;
     return;
   }
 
+  cur = out_buf;
   /* Assumption: CR LF are the last chars in the string, make them 0. */
   while (*cur)
   {
