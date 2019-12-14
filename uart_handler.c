@@ -187,6 +187,35 @@ int filter_data(uint8_t *dst_buff, uint8_t *src_buff)
   return 0;
 }
 
+/** Adjusting the output to make the FPGA + LCD for following effects:
+  * 1) Do not change lines when writing text (remove CR LF from strings)
+  * 3) When sending just CR LF, do send CR without LF.
+  * 4) There is no point 2.
+  * 
+  * @out_buf: buffer to modify in-place :)
+  */
+void output_adjustments(char *out_buf)
+{
+  char *cur;
+
+  if (strlen(out_buf) == 2)
+  {
+    out_buf[0] = '\r';
+    out_buf[1] = 0;
+    return;
+  }
+
+  /* Assumption: CR LF are the last chars in the string, make them 0. */
+  while (*cur)
+  {
+    if (*cur == '\n' || *cur == '\r')
+    {
+      *cur = 0;
+    }
+    cur++;
+  }
+}
+
 int main(void)
 {
   char out_buffer[UART_BUF_SIZE] = {0};
@@ -209,6 +238,7 @@ int main(void)
     recv_count = filter_data(out_buffer, in_buffer);
     if (recv_count > 0)
     {
+      output_adjustments(out_buffer);
       send_string(out_buffer, softuart_send_byte);
       memset(out_buffer, 0, UART_BUF_SIZE);
     }
