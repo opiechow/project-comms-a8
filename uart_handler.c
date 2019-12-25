@@ -1,6 +1,6 @@
 /**
 * author: Oskar Piechowski
-* date: 29-paź-2019 10:28:31 PM
+* date: 29-10-2019 10:28:31 PM
 */
 
 #define F_CPU 8000000UL
@@ -65,11 +65,27 @@ void USART_SendByte(uint8_t u8Data)
   UDR = u8Data;
 }
 
+void buzz(void)
+{
+
+  OCR1A = 0x01FF;
+  // set PWM for 50% duty cycle @ 10bit
+
+  TCCR1A |= (1 << COM1A1);
+  // set none-inverting mode
+
+  TCCR1A |= (1 << WGM11) | (1 << WGM10);
+  // set 10bit phase corrected PWM Mode
+
+  TCCR1B |= (1 << CS11);
+  // set prescaler to 8 and starts PWM
+}
+
 void portb_init(void)
 {
-  // outputs, all off
+  // outputs, all zeroed
   DDRB = 0xFF;
-  PORTB = 0xFF;
+  PORTB = 0x00;
 }
 
 /* T = 1/f, 1.000.000 microseconds in a second. */
